@@ -9,13 +9,13 @@ import 'package:juegoclase/games/ClassGame.dart';
 
 import '../elementos/Gota.dart';
 
-class EmberPlayer extends SpriteAnimationComponent
+class SecondPlayer extends SpriteAnimationComponent
     with HasGameRef<ClassGame> {
 
   late int iTipo=-1;
 
 
-  EmberPlayer({
+  SecondPlayer({
     required super.position,required this.iTipo
     ,required super.size
   }) : super( anchor: Anchor.center);
@@ -23,12 +23,11 @@ class EmberPlayer extends SpriteAnimationComponent
   @override
   void onLoad() {
     animation = SpriteAnimation.fromFrameData(
-      game.images.fromCache('reading.png'),
+      game.images.fromCache('ember.png'),
       SpriteAnimationData.sequenced(
-        amount: 15,
-        amountPerRow: 5,
-        textureSize: Vector2(60,88),
-        stepTime: 0.12,
+        amount: 4,
+        textureSize: Vector2.all(16),
+        stepTime: 0.22,
       ),
     );
 
@@ -36,7 +35,7 @@ class EmberPlayer extends SpriteAnimationComponent
 
 }
 
-class EmberPlayerBody extends BodyComponent with KeyboardHandler,ContactCallbacks{
+class SecondPlayerBody extends BodyComponent with KeyboardHandler,ContactCallbacks{
   final Vector2 velocidad = Vector2.zero();
   final double aceleracion = 200;
   final Set<LogicalKeyboardKey> magiaSubZero={LogicalKeyboardKey.arrowDown, LogicalKeyboardKey.keyA};
@@ -49,13 +48,13 @@ class EmberPlayerBody extends BodyComponent with KeyboardHandler,ContactCallback
   static const  int I_PLAYER_SCORPIO=1;
   static const  int I_PLAYER_TANYA=2;
   final _defaultColor = Colors.red;
-  late EmberPlayer emberPlayer;
+  late SecondPlayer secondPlayer;
   late double jumpSpeed=0.0;
   Vector2 initialPosition;
   bool blEspacioLiberado=true;
   int iVidas=3;
 
-  EmberPlayerBody({required this.initialPosition,required this.iTipo,
+  SecondPlayerBody({required this.initialPosition,required this.iTipo,
     required this.tamano})
       : super();
 
@@ -87,8 +86,8 @@ class EmberPlayerBody extends BodyComponent with KeyboardHandler,ContactCallback
   Future<void> onLoad() {
     // TODO: implement onLoad
 
-    emberPlayer=EmberPlayer(position: Vector2(0,0),iTipo: iTipo,size:tamano);
-    add(emberPlayer);
+    secondPlayer=SecondPlayer(position: Vector2(0,0),iTipo: iTipo,size:tamano);
+    add(secondPlayer);
     return super.onLoad();
   }
 
@@ -109,35 +108,34 @@ class EmberPlayerBody extends BodyComponent with KeyboardHandler,ContactCallback
       horizontalDirection = 0;
       verticalDirection = 0;
 
-      if(keysPressed.contains(LogicalKeyboardKey.keyA)){
+      if(keysPressed.contains(LogicalKeyboardKey.arrowLeft)){
         horizontalDirection=-1;
       }
-      else if(keysPressed.contains(LogicalKeyboardKey.keyD)){
+      else if(keysPressed.contains(LogicalKeyboardKey.arrowRight)){
         horizontalDirection=1;
       }
 
 
-      if(keysPressed.contains(LogicalKeyboardKey.keyW)){
+      if(keysPressed.contains(LogicalKeyboardKey.arrowUp)){
         verticalDirection=-1;
       }
-      else if(keysPressed.contains(LogicalKeyboardKey.keyS)){
+      else if(keysPressed.contains(LogicalKeyboardKey.arrowDown)){
         verticalDirection=1;
       }
 
-      //print("---------->>>>>>>>>>>.   ${blEspacioLiberado}");
-      if(keysPressed.contains(LogicalKeyboardKey.space)){
+      /*if(keysPressed.contains(LogicalKeyboardKey.space)){
         if(blEspacioLiberado)jumpSpeed=2000;
         blEspacioLiberado=false;
         //body.gravityOverride=Vector2(0, -20);
         //this.bodyDef?.gravityOverride=Vector2(0, -20);
-      }
+      }*/
     }
-    else if(isKeyUp){
+    /*else if(isKeyUp){
       //if(keysPressed.contains(LogicalKeyboardKey.space)){
       //print("222222222---------->>>>>>>>>>>.   ${blEspacioLiberado}");
       blEspacioLiberado=true;
       //}
-    }
+    }*/
     return true;
   }
 
@@ -146,12 +144,6 @@ class EmberPlayerBody extends BodyComponent with KeyboardHandler,ContactCallback
   @override
   void update(double dt) {
     // TODO: implement update
-    /*velocidad.x = horizontalDirection * aceleracion; //v=a*t
-    velocidad.y = verticalDirection * aceleracion; //v=a*t
-    //position += velocidad * dt; //d=v*t
-
-    position.x += velocidad.x * dt; //d=v*t
-    position.y += velocidad.y * dt; //d=v*t*/
 
     velocidad.x = horizontalDirection * aceleracion;
     velocidad.y = verticalDirection * aceleracion;
@@ -171,13 +163,13 @@ class EmberPlayerBody extends BodyComponent with KeyboardHandler,ContactCallback
     body.applyLinearImpulse(velocidad*dt*1000);
     //body.applyAngularImpulse(3);
 
-    if (horizontalDirection < 0 && emberPlayer.scale.x > 0) {
+    if (horizontalDirection < 0 && secondPlayer.scale.x > 0) {
       //flipAxisDirection(AxisDirection.left);
       //flipAxis(Axis.horizontal);
-      emberPlayer.flipHorizontallyAroundCenter();
-    } else if (horizontalDirection > 0 && emberPlayer.scale.x < 0) {
+      secondPlayer.flipHorizontallyAroundCenter();
+    } else if (horizontalDirection > 0 && secondPlayer.scale.x < 0) {
       //flipAxisDirection(AxisDirection.left);
-      emberPlayer.flipHorizontallyAroundCenter();
+      secondPlayer.flipHorizontallyAroundCenter();
     }
 
     super.update(dt);
